@@ -1,5 +1,9 @@
 const TelegramBot = require('node-telegram-bot-api');
 const axios = require('axios');
+const express = require('express');
+const app = express();
+const port = process.env.PORT || 3000;  // Используем порт, который назначен Render
+
 const token = '7249609731:AAHD5rQg-EwR-MxGzTzJ32ObCOwyYTBzk6k';
 const huggingFaceToken = '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';
 
@@ -44,7 +48,7 @@ bot.onText(/🎨 Сгенерировать аватар/, async (msg) => {
     // Шаг 2: Ожидание ответа пользователя
     bot.onReplyToMessage(chatId, replyId, async (reply) => {
       const description = reply.text;
-      console.log("Получено описание:", description); // Отладочный вывод
+      console.log("Получено описание:", description);
 
       try {
         // Запрос к API Hugging Face
@@ -58,7 +62,7 @@ bot.onText(/🎨 Сгенерировать аватар/, async (msg) => {
         );
 
         const imageBuffer = Buffer.from(response.data, 'binary');
-        console.log("Изображение успешно получено."); // Отладочный вывод
+        console.log("Изображение успешно получено.");
 
         // Шаг 3: Отправка изображения
         await bot.sendPhoto(chatId, imageBuffer, {
@@ -102,4 +106,13 @@ bot.onText(/💰 Поддержать проект/, async (msg) => {
   } catch (error) {
     console.error('Error sending donation options:', error);
   }
+});
+
+// Пример серверной настройки для Render
+app.get('/', (req, res) => {
+  res.send('Bot is running!');
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
